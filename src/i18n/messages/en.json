@@ -1,0 +1,15 @@
+{
+  "brand": "Code Languages",
+  "nav": {
+    "languages": "Languages",
+    "playgrounds": "Playgrounds",
+    "tools": "Tools",
+    "resources": "Resources",
+    "company": "Company",
+    "getStarted": "Get started"
+  },
+  "home": {
+    "headline": "The free, fun way to learn to code.",
+    "getStarted": "Get started"
+  }
+}
