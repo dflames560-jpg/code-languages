@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${sans.variable} ${mono.variable} ${display.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <script dangerouslySetInnerHTML={{ __html: `try{document.documentElement.dataset.theme=localStorage.getItem('code-languages-theme')||'dark'}catch{document.documentElement.dataset.theme='dark'}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try{document.documentElement.dataset.theme=localStorage.getItem('code-languages-theme')||'light'}catch{document.documentElement.dataset.theme='light'}` }} />
         <SiteHeader />
         {children}
         <SiteFooter />

@@ -2,6 +2,8 @@
 
 A responsive coding-education platform scaffold built with Next.js App Router, TypeScript, Tailwind CSS, CodeMirror, and Lucide icons.
 
+The visual system is a bright, playful coding studio with an original CSS-drawn robot guide named Byte. The design is inspired by common gamified-learning patterns but uses original layout, artwork, and lesson copy.
+
 ## Run locally
 
 ```powershell
@@ -15,6 +17,7 @@ Open http://localhost:3000.
 - Landing page with learning modes, expandable roadmaps, streak preview, certificates, leaderboard, and FAQ.
 - Searchable 47-item catalog with category filters and generated language pages, docs, playgrounds, and sitemap entries for every seed.
 - Sequential guided lessons with numbered steps, short explanations, code-reading notes, practice prompts, and local progress.
+- Original Byte robot avatar used in the responsive home mission scene, shared brand, course guide, favicon, and Open Graph preview.
 - CodeMirror playgrounds, with JavaScript executed in an isolated, network-restricted iframe sandbox.
 - Language-specific starter programs and file extensions across compiled, functional, scripting, shell, and query languages; JavaScript and HTML/CSS have browser execution or preview support.
 - Starter references for catalog paths, certifications, onboarding recommendations, demo sign-in, and pricing.

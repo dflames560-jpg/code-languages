@@ -1,5 +1,6 @@
-import { ArrowDown, ArrowRight, ArrowUpRight, Check, Flame } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, Flame, Star, Zap } from "lucide-react";
 import Link from "next/link";
+import { ByteAvatar } from "@/components/byte-avatar";
 import { CertificateCard, CodeEditorDemo, FaqAccordion, LanguagePill, LeaderboardList, LessonModeTabs, RoadmapCard, StreakCalendar } from "@/components/learning-widgets";
 import { languages, roadmaps } from "@/lib/catalog";
 
@@ -16,24 +17,25 @@ const faqItems = [
 export default function Home() {
   return (
     <main>
-      <section className="hero-wrap">
-        <div className="hero-grid page-shell">
-          <div className="hero-copy">
-            <p className="eyebrow"><span className="eyebrow-dot" /> YOUR NEXT CHAPTER STARTS HERE</p>
-            <h1>The free, fun way <em>to learn to code.</em></h1>
-            <p className="hero-subtitle">Build real skills by building real things. Little lessons, big momentum, and a friendly Byte in your corner.</p>
-            <div className="hero-actions"><Link className="button button-lime" href="/onboard">Get started <ArrowRight size={17} /></Link><Link className="text-link" href="/login">I already have an account</Link></div>
-            <div className="hero-proof"><div className="avatar-stack"><span>J</span><span>M</span><span>A</span><span>+</span></div><p><strong>24,813</strong> learners coding today</p><span className="proof-divider" /><p className="rating">★★★★★ <strong>4.9</strong></p></div>
-            <div className="store-row"><span><span className="store-symbol">◉</span> App Store <b>4.9</b></span><span><span className="store-symbol">▶</span> Google Play <b>4.8</b></span></div>
+      <section className="studio-hero">
+        <div className="page-shell studio-hero-layout">
+          <div className="studio-hero-copy">
+            <p className="hero-sticker"><Star size={13} fill="currentColor" /> A LITTLE CODE GOES A LONG WAY</p>
+            <h1>Learn to code.<br /><em>Make your ideas real.</em></h1>
+            <p className="studio-hero-intro">Tiny lessons, hands-on missions, and a helpful little robot in your corner. Start anywhere. Get better every day.</p>
+            <div className="hero-actions"><Link className="button button-lime" href="/onboard">Find my first lesson <ArrowRight size={17} /></Link><Link className="text-link" href="/login">I already have an account</Link></div>
+            <div className="studio-social-proof"><div className="avatar-stack"><span>J</span><span>M</span><span>A</span><span>+</span></div><p><strong>24,813</strong> curious minds learning today</p><span className="proof-divider" /><p className="rating"><Star size={12} fill="currentColor" /> <strong>4.9</strong></p></div>
+            <div className="hero-language-hint"><span>YOUR FIRST LINE COULD BE</span><code>print(&quot;hello, world!&quot;)</code></div>
           </div>
-          <div className="hero-art" aria-label="Byte, your coding companion" role="img">
-            <div className="art-orbit orbit-one" /><div className="art-orbit orbit-two" />
-            <div className="hero-terminal"><div className="terminal-top"><span /><span /><span /><b>first-program.py</b></div><div className="terminal-code"><i>01</i> <span className="code-purple">print</span><span>(</span><span className="code-yellow">&quot;hello, future&quot;</span><span>)</span><br /><i>02</i><br /><i>03</i> <span className="code-green">&gt;&gt;&gt;</span> <span className="code-yellow">hello, future</span></div><div className="terminal-success"><Check size={13} /> all tests passed <span>+20 XP</span></div></div>
-            <div className="byte-figure"><div className="byte-shine" /><div className="byte-eyes"><i /><i /></div><div className="byte-smile" /><div className="byte-pixel pixel-a" /><div className="byte-pixel pixel-b" /></div>
-            <div className="float-label label-streak"><Flame size={14} fill="currentColor" /> 7 day streak</div><div className="float-label label-level">✦ LEVEL UP!</div><div className="float-spark spark-a">✳</div><div className="float-spark spark-b">✦</div>
+          <div className="studio-stage" aria-label="Byte helps a learner complete a coding mission" role="img">
+            <div className="stage-confetti confetti-one">✦</div><div className="stage-confetti confetti-two">✳</div>
+            <div className="mission-window"><div className="mission-window-head"><span><i /><i /><i /></span><b>MISSION 01 <em>·</em> PYTHON</b><span className="mission-state"><span /> READY</span></div><div className="mission-title"><span className="mission-badge"><Zap size={13} fill="currentColor" /></span><div><small>YOUR FIRST CHALLENGE</small><strong>Say hello to the world</strong></div></div><div className="mission-code"><div><i>1</i><code><b>print</b>(<strong>&quot;Hello, world!&quot;</strong>)</code></div><div><i>2</i><code className="code-comment"># You’ve got this</code></div><div className="mission-runline"><span /><span>Run your code to see what happens</span></div></div></div>
+            <div className="avatar-platform"><div className="byte-speech">Your turn! <span>↙</span></div><ByteAvatar size="large" /></div>
+            <div className="stage-xp"><span><Zap size={13} fill="currentColor" /></span><strong>+20 XP</strong><small>FIRST WIN</small></div>
+            <div className="stage-streak"><Flame size={15} fill="currentColor" /><span><strong>Day 1</strong><small>streak started</small></span></div>
           </div>
         </div>
-        <div className="hero-bottom page-shell"><span>START WITH WHAT SPARKS YOU</span><ArrowDown size={14} /><span className="hero-scroll">SCROLL TO EXPLORE</span></div>
+        <div className="page-shell studio-hero-bottom"><span>{languages.length} LANGUAGES & TOOLS</span><span className="hero-bottom-rule" /><span>ONE SMALL WIN AT A TIME</span><Link href="/languages">Explore paths <ArrowRight size={13} /></Link></div>
       </section>
 
       <section className="language-strip section-pad"><div className="page-shell"><div className="strip-heading"><p className="eyebrow">A WORLD OF CODE, ONE STEP AT A TIME</p><Link href="/languages">Explore all {languages.length} <ArrowUpRight size={14} /></Link></div><div className="language-marquee" aria-label="Explore coding languages"><div className="language-track">{languages.map((language) => <LanguagePill key={language.slug} language={language} />)}{languages.map((language) => <LanguagePill key={`${language.slug}-repeat`} language={language} ariaHidden />)}</div></div></div></section>

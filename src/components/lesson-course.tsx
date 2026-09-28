@@ -4,6 +4,7 @@ import { useState, useSyncExternalStore } from "react";
 import { ArrowLeft, ArrowRight, BookOpen, Check, Lightbulb, Target } from "lucide-react";
 import Link from "next/link";
 import type { Language } from "@/lib/catalog";
+import { ByteAvatar } from "@/components/byte-avatar";
 import { getLessonGuide } from "@/lib/lesson-content";
 import { completeLesson, getProgressSnapshot, getServerProgressSnapshot, subscribeProgress } from "@/lib/progress";
 import { Playground } from "@/components/learning-widgets";
@@ -32,7 +33,7 @@ export function LessonCourse({ language }: { language: Language }) {
           <h1>Small steps. <em>Real skills.</em></h1>
           <p>Each step introduces one idea, then gives you space to try it yourself.</p>
         </div>
-        <Link href={`/docs/${language.slug}`}><BookOpen size={14} /> Reference</Link>
+        <div className="course-header-actions"><div className="course-buddy"><ByteAvatar size="brand" label="Byte, your lesson guide" /><span><strong>Byte</strong><small>learning with you</small></span></div><Link href={`/docs/${language.slug}`}><BookOpen size={14} /> Reference</Link></div>
       </header>
       <div className="course-progress" role="progressbar" aria-label="Course progress" aria-valuemin={0} aria-valuemax={language.lessons.length} aria-valuenow={completedCount}>
         <span style={{ width: `${Math.round((completedCount / language.lessons.length) * 100)}%` }} />
