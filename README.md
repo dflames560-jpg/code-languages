@@ -1,8 +1,6 @@
-# Code Languages
+# Storecraft
 
-A responsive coding-education platform scaffold built with Next.js App Router, TypeScript, Tailwind CSS, CodeMirror, and Lucide icons.
-
-The visual system is a bright, playful coding studio with an original CSS-drawn robot guide named Byte. The design is inspired by common gamified-learning patterns but uses original layout, artwork, and lesson copy.
+Storecraft is a practical learning workspace for people building independent online stores. It focuses on Shopify setup, product research, responsible dropshipping operations, unit economics, and marketing experiments.
 
 ## Run locally
 
@@ -10,22 +8,22 @@ The visual system is a bright, playful coding studio with an original CSS-drawn 
 npm install
 npm run dev
 ```
+
 Open http://localhost:3000.
 
 ## Included
 
-- Landing page with learning modes, expandable roadmaps, streak preview, certificates, leaderboard, and FAQ.
-- Searchable 47-item catalog with category filters and generated language pages, docs, playgrounds, and sitemap entries for every seed.
-- Sequential guided lessons with numbered steps, short explanations, code-reading notes, practice prompts, and local progress.
-- Original Byte robot avatar used in the responsive home mission scene, shared brand, course guide, favicon, and Open Graph preview.
-- CodeMirror playgrounds, with JavaScript executed in an isolated, network-restricted iframe sandbox.
-- Language-specific starter programs and file extensions across compiled, functional, scripting, shell, and query languages; JavaScript and HTML/CSS have browser execution or preview support.
-- Starter references for catalog paths, certifications, onboarding recommendations, demo sign-in, and pricing.
-- Local storage for theme preference and lesson XP/streak progress. Authentication and server-backed persistence are not connected.
-- English-first locale scaffold. Spanish and French are marked as coming soon.
-- Generated Open Graph artwork, `sitemap.xml`, and `robots.txt`.
+- Seller workspace dashboard with local learning, checklist, and product metrics.
+- Original commerce academy courses with step-by-step lessons and browser-local completion.
+- Product Lab with saved ideas and a contribution-per-order calculator.
+- Store launch checklist with locally saved progress.
+- Commerce coach with transparent, rules-based educational guidance using workspace data.
+- Marketing brief builder for original creative angles and bounded tests.
+- Responsive operator-oriented layout and generated social metadata.
 
-Python, SQL, React, and the other catalog languages have language-specific editors and starter examples, but their compilers/interpreters are not bundled yet. Paths other than the five original featured tracks are curriculum stubs.
+## Integrations and limits
+
+The Shopify button is a placeholder; no store API or credentials are connected. The coach is a local rules-based guide, not a hosted AI model. Product data, course progress, campaign briefs, and checklist state are stored in this browser only. This is an educational tool, not legal, tax, or financial advice. Sellers should verify platform policies, supplier terms, product claims, consumer rules, and tax requirements for their markets.
 
 ## Checks
 
@@ -35,24 +33,11 @@ npx tsc --noEmit
 npm run build
 ```
 
-## Main routes
+## Routes
 
-- `/languages` and `/languages/[slug]`
-- `/playground/[slug]`
-- `/docs` and `/docs/[slug]`
-- `/certifications`, `/onboard`, `/login`, and `/pricing`
-
-The shared catalog and curriculum seed data live in `src/lib/catalog.ts`.
-
-## Stack
-
-```text
-Next.js 16 · React 19 · TypeScript · Tailwind CSS 4
-```
-
-The project is set up for npm. Run the development server with:
-
-```powershell
-npm run dev
-```
-
+- `/` workspace overview
+- `/academy` and `/academy/[slug]` course catalog and lessons
+- `/coach` commerce learning coach
+- `/product-lab` product notes and unit economics
+- `/store-launch` launch checklist
+- `/marketing` campaign brief builder

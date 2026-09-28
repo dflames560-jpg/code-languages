@@ -1,49 +1,44 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { DM_Mono, DM_Sans, Playfair_Display } from "next/font/google";
-import { SiteFooter, SiteHeader } from "@/components/site-shell";
+import { DM_Mono, DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
 
 const sans = DM_Sans({
-  variable: "--font-geist-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
 const mono = DM_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
 });
 
-const display = Playfair_Display({
+const display = Manrope({
   variable: "--font-display",
   subsets: ["latin"],
-  style: ["italic", "normal"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://codelanguages.dev"),
-  title: { default: "Code Languages | Learn to code, one little win at a time", template: "%s | Code Languages" },
-  description: "The free, fun way to learn to code. Build real skills with bite-sized lessons, hands-on playgrounds, and a friendly Byte in your corner.",
+  metadataBase: new URL("https://storecraft.school"),
+  title: { default: "Storecraft | Learn to build a better online store", template: "%s | Storecraft" },
+  description: "A practical learning workspace for Shopify setup, product research, dropshipping operations, and responsible marketing.",
   openGraph: {
-    title: "Code Languages | Learn to code, one little win at a time",
-    description: "Build real skills by building real things. Free, hands-on coding education for curious minds.",
-    siteName: "Code Languages",
+    title: "Storecraft | Learn to build a better online store",
+    description: "Practical lessons, a product lab, launch checklists, and a transparent commerce coach.",
+    siteName: "Storecraft",
     type: "website",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Code Languages: the free, fun way to learn to code" }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Storecraft: practical education for independent store builders" }],
   },
-  twitter: { card: "summary_large_image", title: "Code Languages", description: "The free, fun way to learn to code." },
-  alternates: { languages: { en: "/", es: "/es", fr: "/fr" } },
+  twitter: { card: "summary_large_image", title: "Storecraft", description: "Build a better online store with practical learning." },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable} ${display.variable}`} suppressHydrationWarning>
-      <body suppressHydrationWarning>
-        <script dangerouslySetInnerHTML={{ __html: `try{document.documentElement.dataset.theme=localStorage.getItem('code-languages-theme')||'light'}catch{document.documentElement.dataset.theme='light'}` }} />
-        <SiteHeader />
+    <html lang="en" className={`${sans.variable} ${mono.variable} ${display.variable}`}>
+      <body>
         {children}
-        <SiteFooter />
       </body>
     </html>
   );
