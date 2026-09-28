@@ -2,7 +2,7 @@
 
 :root {
   color-scheme: light;
-  --paper: #f1f7f5;
+  --paper: #edf4f1;
   --surface: #ffffff;
   --surface-soft: #e5f0ec;
   --ink: #18312e;
@@ -44,7 +44,7 @@
 
 * { box-sizing: border-box; }
 html { min-width: 320px; background: var(--paper); scroll-behavior: smooth; }
-body { margin: 0; min-height: 100vh; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 14px; line-height: 1.55; }
+body { margin: 0; min-height: 100vh; background: linear-gradient(122deg, #e2f0eb 0%, #f5f7f0 48%, #e5f0ef 100%); background-attachment: fixed; color: var(--ink); font-family: var(--sans); font-size: 14px; line-height: 1.55; }
 button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 a { color: inherit; text-decoration: none; }
@@ -52,7 +52,7 @@ button { color: inherit; }
 ::selection { background: #d9e6ba; color: #1e382a; }
 :focus-visible { outline: 2px solid #547a5c; outline-offset: 3px; }
 
-.commerce-app { min-height: 100vh; }
+.commerce-app { min-height: 100vh; background-image: repeating-linear-gradient(0deg, transparent 0 43px, #315c4508 43px 44px), repeating-linear-gradient(90deg, transparent 0 43px, #315c4508 43px 44px); background-attachment: fixed; }
 .commerce-topbar { position: sticky; top: 0; z-index: 40; height: 64px; display: flex; align-items: center; gap: 28px; padding: 0 30px; border-bottom: 1px solid var(--line); background: #fbfdfc; }
 .commerce-brand { display: inline-flex; align-items: center; gap: 9px; min-width: 205px; font-size: 17px; font-weight: 800; letter-spacing: 0; }
 .brand-dot { color: var(--orange); }
