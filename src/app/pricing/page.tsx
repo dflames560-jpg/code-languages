@@ -1,0 +1,10 @@
+import type { Metadata } from "next";
+import { Check, Minus } from "lucide-react";
+
+export const metadata: Metadata = { title: "Simple, free pricing", description: "Learn to code for free. Compare the Code Languages free plan with optional future premium features." };
+
+const features = ["Every core lesson", "Browser playgrounds", "Learning paths", "Streaks and leagues", "Course certificates", "Offline lesson access", "Personal learning analytics"];
+
+export default function PricingPage() {
+  return <main><section className="page-hero"><div className="page-shell"><p className="eyebrow">LEARNING SHOULDN’T BE A LUXURY</p><h1>Start free. Stay <em>curious.</em></h1><p>Every core learning path, practice space, and certificate is free. Premium extras are a future idea, not a barrier to learning.</p></div></section><section className="page-shell page-content"><div className="pricing-grid"><article className="pricing-plan"><p className="eyebrow">THE FULL LEARNING EXPERIENCE</p><h2>Free <span>forever</span></h2><p>Everything you need to get started and keep going.</p><div className="pricing-price">$0 <small>/ always</small></div><ul>{features.slice(0, 5).map((feature) => <li key={feature}><Check size={15} /> {feature}</li>)}</ul><button className="button button-lime" type="button" disabled>Get started free <Check size={15} /></button></article><article className="pricing-plan pricing-future"><p className="eyebrow">OPTIONAL EXTRAS · FUTURE</p><h2>Plus <span>not available yet</span></h2><p>We may add a few optional tools for learners who want them.</p><div className="pricing-price">Not for sale</div><ul>{features.map((feature, index) => <li key={feature}>{index < 5 ? <Check size={15} /> : <Minus size={15} />} {feature}</li>)}</ul><button className="button button-outline" type="button" disabled>Coming later</button></article></div></section></main>;
+}

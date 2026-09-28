@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { DM_Mono, DM_Sans, Playfair_Display } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/site-shell";
 import "./globals.css";
@@ -35,9 +36,9 @@ export const metadata: Metadata = {
   alternates: { languages: { en: "/", es: "/es", fr: "/fr" } },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable} ${display.variable}`}>
+    <html lang="en" className={`${sans.variable} ${mono.variable} ${display.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <script dangerouslySetInnerHTML={{ __html: `try{document.documentElement.dataset.theme=localStorage.getItem('code-languages-theme')||'dark'}catch{document.documentElement.dataset.theme='dark'}` }} />
         <SiteHeader />

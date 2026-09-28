@@ -9,13 +9,13 @@ export function generateStaticParams() {
   return languages.map((language) => ({ slug: language.slug }));
 }
 
-export async function generateMetadata({ params }: PageProps<"/playground/[slug]">): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const language = getLanguage(slug);
   return { title: language ? `${language.name} browser playground` : "Code playground", description: language ? `Practice ${language.name} in an editable, browser-based coding playground.` : "Practice coding in your browser." };
 }
 
-export default async function PlaygroundPage({ params }: PageProps<"/playground/[slug]">) {
+export default async function PlaygroundPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const language = getLanguage(slug);
   if (!language) notFound();

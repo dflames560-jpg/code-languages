@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const primary = ["", "/languages", "/docs", "/certifications", "/onboard", "/login", "/pricing"];
   const languageRoutes = languages.flatMap((language) => [
     { url: `${baseUrl}/languages/${language.slug}`, changeFrequency: "monthly" as const, priority: language.featured ? 0.8 : 0.6 },
+    { url: `${baseUrl}/learn/${language.slug}`, changeFrequency: "monthly" as const, priority: language.featured ? 0.8 : 0.5 },
     { url: `${baseUrl}/docs/${language.slug}`, changeFrequency: "monthly" as const, priority: 0.5 },
     { url: `${baseUrl}/playground/${language.slug}`, changeFrequency: "monthly" as const, priority: 0.6 },
   ]);

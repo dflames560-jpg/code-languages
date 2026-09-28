@@ -1,43 +1,59 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { ArrowRight, ChevronDown, Code2, Globe2, Menu, Moon, Sun, X } from "lucide-react";
+import { languages } from "@/lib/catalog";
 
 const menus = [
-  { label: "Languages", href: "/languages", items: ["Python", "JavaScript", "HTML", "SQL", "React"] },
-  { label: "Playgrounds", href: "/playground/javascript", items: ["JavaScript", "Python", "HTML", "SQL"] },
+  { label: "Languages", href: "/languages", items: ["Python", "JavaScript", "TypeScript", "HTML", "CSS", "Java", "C++", "SQL", "Go", "Rust", "Swift", "Kotlin", "Ruby", "Bash", "Julia", "Solidity", "Scala", "React"] },
+  { label: "Playgrounds", href: "/playground/javascript", items: ["JavaScript", "Python", "HTML", "CSS", "SQL", "TypeScript"] },
   { label: "Tools", href: "/languages?category=Tools", items: ["Git", "Terminal", "Excel"] },
   { label: "Resources", href: "/docs", items: ["Documentation", "Certifications", "Pricing"] },
   { label: "Company", href: "/about", items: ["About us", "Blog", "Support"] },
 ];
 
+function subscribeToTheme(onChange: () => void) {
+  window.addEventListener("code-languages-theme-change", onChange);
+  return () => window.removeEventListener("code-languages-theme-change", onChange);
+}
+
+function getThemeSnapshot() {
+  return document.documentElement.dataset.theme === "light" ? "light" : "dark";
+}
+
+function getServerThemeSnapshot() {
+  return "dark";
+}
+
 export function SiteHeader() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [localeOpen, setLocaleOpen] = useState(false);
-  const [theme, setTheme] = useState("dark");
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("code-languages-theme");
-    if (savedTheme === "light" || savedTheme === "dark") setTheme(savedTheme);
-  }, []);
+  const theme = useSyncExternalStore(subscribeToTheme, getThemeSnapshot, getServerThemeSnapshot);
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
     document.documentElement.dataset.theme = next;
     localStorage.setItem("code-languages-theme", next);
+    window.dispatchEvent(new Event("code-languages-theme-change"));
   };
   return <header className="site-header"><div className="header-inner page-shell">
     <Link href="/" className="brand" aria-label="Code Languages home"><span className="brand-byte" aria-hidden="true"><i /><i /></span><span>code<span>languages</span></span></Link>
-    <nav className={`desktop-nav ${mobileOpen ? "mobile-open" : ""}`} aria-label="Main navigation">{menus.map((menu) => <div className="nav-menu" key={menu.label} onMouseEnter={() => setActiveMenu(menu.label)} onMouseLeave={() => setActiveMenu(null)}><Link href={menu.href} aria-haspopup="true" aria-expanded={activeMenu === menu.label} onFocus={() => setActiveMenu(menu.label)} onClick={() => setActiveMenu(activeMenu === menu.label ? null : menu.label)}>{menu.label}<ChevronDown size={12} /></Link>{activeMenu === menu.label && <div className="nav-dropdown" onKeyDown={(event) => { if (event.key === "Escape") setActiveMenu(null); }}><span className="dropdown-label">{menu.label}</span>{menu.items.map((item) => { const slug = item.toLowerCase().replace(" ", "-"); const target = menu.label === "Languages" ? `/languages/${slug}` : menu.label === "Playgrounds" ? `/playground/${slug}` : item === "Documentation" ? "/docs" : item === "Certifications" ? "/certifications" : item === "Pricing" ? "/pricing" : menu.href; return <Link key={item} href={target} onClick={() => setActiveMenu(null)}>{item}<ArrowRight size={13} /></Link>; })}<Link href={menu.href} className="dropdown-all">View all {menu.label.toLowerCase()} <ArrowRight size={13} /></Link></div>}</div>)}</nav>
+    <nav className={`desktop-nav ${mobileOpen ? "mobile-open" : ""}`} aria-label="Main navigation">{menus.map((menu) => <div className="nav-menu" key={menu.label} onMouseEnter={() => setActiveMenu(menu.label)} onMouseLeave={() => setActiveMenu(null)}><Link href={menu.href} aria-haspopup="true" aria-expanded={activeMenu === menu.label} onFocus={() => setActiveMenu(menu.label)} onClick={() => setActiveMenu(activeMenu === menu.label ? null : menu.label)}>{menu.label}<ChevronDown size={12} /></Link>{activeMenu === menu.label && <div className="nav-dropdown" onKeyDown={(event) => { if (event.key === "Escape") setActiveMenu(null); }}><span className="dropdown-label">{menu.label}</span>{menu.items.map((item) => { const slug = languages.find((language) => language.name === item)?.slug ?? item.toLowerCase().replaceAll(" ", "-"); const target = menu.label === "Languages" ? `/languages/${slug}` : menu.label === "Playgrounds" ? `/playground/${slug}` : item === "Documentation" ? "/docs" : item === "Certifications" ? "/certifications" : item === "Pricing" ? "/pricing" : menu.href; return <Link key={item} href={target} onClick={() => setActiveMenu(null)}>{item}<ArrowRight size={13} /></Link>; })}<Link href={menu.href} className="dropdown-all">View all {menu.label.toLowerCase()} <ArrowRight size={13} /></Link></div>}</div>)}</nav>
     <div className="header-actions"><div className="locale-wrap"><button className="header-locale" type="button" aria-label="Choose display language" aria-expanded={localeOpen} aria-controls="locale-menu" onClick={() => setLocaleOpen(!localeOpen)}><Globe2 size={15} /><span>EN</span></button>{localeOpen && <div className="locale-menu" id="locale-menu" role="menu"><span>DISPLAY LANGUAGE</span><button type="button" role="menuitemradio" aria-checked="true" onClick={() => setLocaleOpen(false)}>English <b>Selected</b></button><button type="button" role="menuitemradio" aria-checked="false" disabled>Español <b>Coming soon</b></button><button type="button" role="menuitemradio" aria-checked="false" disabled>Français <b>Coming soon</b></button></div>}</div><button className="theme-toggle" type="button" aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} onClick={toggleTheme}>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}</button><Link href="/onboard" className="header-cta">Get started <ArrowRight size={14} /></Link><button className="mobile-menu" type="button" aria-label={mobileOpen ? "Close menu" : "Open menu"} aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={19} /> : <Menu size={19} />}</button></div>
   </div></header>;
 }
 
 const footerGroups = [
-  { title: "Explore", links: [["Languages", "/languages"], ["Playgrounds", "/playground/javascript"], ["Certifications", "/certifications"], ["Tools", "/languages?category=Tools"]] },
-  { title: "Learn", links: [["Documentation", "/docs"], ["Python", "/languages/python"], ["JavaScript", "/languages/javascript"], ["React", "/languages/react"]] },
-  { title: "Company", links: [["About", "/about"], ["Blog", "/blog"], ["Support", "/support"], ["Pricing", "/pricing"]] },
+  { title: "Company", links: [["About", "/about"], ["Pricing", "/pricing"]] },
+  { title: "Resources", links: [["Learning paths", "/languages"], ["Blog", "/blog"]] },
+  { title: "Support", links: [["Help center", "/support"], ["Contact", "/support"]] },
+  { title: "Languages", links: [["Python", "/languages/python"], ["JavaScript", "/languages/javascript"], ["React", "/languages/react"]] },
+  { title: "Playgrounds", links: [["JavaScript", "/playground/javascript"], ["Python", "/playground/python"]] },
+  { title: "Certifications", links: [["Browse certificates", "/certifications"]] },
+  { title: "Tools", links: [["Git", "/languages/git"], ["Terminal", "/languages/terminal"], ["Excel", "/languages/excel"]] },
+  { title: "Docs", links: [["Documentation", "/docs"], ["Python guide", "/docs/python"]] },
+  { title: "Blog", links: [["Latest notes", "/blog"]] },
 ];
 
 export function SiteFooter() {

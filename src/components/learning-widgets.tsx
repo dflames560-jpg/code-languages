@@ -9,7 +9,9 @@ import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { sql } from "@codemirror/lang-sql";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { css } from "@codemirror/lang-css";
 import type { Language, CatalogCategory } from "@/lib/catalog";
+import { getFileExtension, getStarterCode } from "@/lib/catalog";
 import { completeLesson } from "@/lib/progress";
 
 type Roadmap = { title: string; icon: string; color: string; steps: string[] };
@@ -84,9 +86,9 @@ export function CatalogBrowser({ languages }: { languages: Language[] }) {
   return <><div className="catalog-controls"><label className="catalog-search"><Search size={17} /><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search languages, tools..." aria-label="Search the catalog" />{query && <button type="button" onClick={() => setQuery("")} aria-label="Clear search"><X size={14} /></button>}</label><div className="category-filters" role="group" aria-label="Filter by category">{categories.map((item) => <button key={item} onClick={() => setCategory(item)} className={category === item ? "active" : ""} type="button">{item}</button>)}</div></div><p className="catalog-count">Showing <strong>{results.length}</strong> of {languages.length} learning paths</p><div className="catalog-grid">{results.map((language) => <Link href={`/languages/${language.slug}`} key={language.slug} className="catalog-card"><span className="catalog-mark" style={{ "--language-color": language.color } as React.CSSProperties}>{language.mark}</span><span className="catalog-info"><strong>{language.name}</strong><small>{language.description}</small><span className="catalog-tags"><i>{language.category}</i><i>{language.level}</i></span></span><ArrowRight size={16} /></Link>)}{results.length === 0 && <div className="catalog-empty"><Search size={20} /><strong>No matches yet</strong><span>Try a different name or category.</span></div>}</div></>;
 }
 
-export function Playground({ language }: { language: Language }) {
-  const langKey = language.slug === "cpp" ? "javascript" : language.slug;
-  const [source, setSource] = useState(langKey === "python" ? 'name = "Ada"\nprint(f"Hello, {name}!")' : langKey === "sql" ? "SELECT 'Hello, Ada!' AS greeting;" : langKey === "html" ? "<h1>Hello, Ada!</h1>" : langKey === "react" ? "function Greeting() {\n  return <h1>Hello, Ada!</h1>;\n}" : 'const name = "Ada";\nconsole.log(`Hello, ${name}!`);');
+export function Playground({ language, lessonId = "first-run", lessonTitle = `${language.name} first successful run`, onLessonComplete }: { language: Language; lessonId?: string; lessonTitle?: string; onLessonComplete?: () => void }) {
+  const langKey = language.slug;
+  const [source, setSource] = useState(() => getStarterCode(language));
   const [output, setOutput] = useState("");
   const [running, setRunning] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -101,8 +103,9 @@ export function Playground({ language }: { language: Language }) {
       const result = event.data as { type: string; output: string; error?: string };
       if (result.error) setOutput(result.error);
       else {
-        const completion = completeLesson({ id: `playground:${langKey}:first-run`, languageSlug: langKey, title: `${language.name} first successful run`, type: "challenge", xpReward: 20 });
+        const completion = completeLesson({ id: `lesson:${langKey}:${lessonId}`, languageSlug: langKey, title: lessonTitle, type: "challenge", xpReward: 20 });
         setOutput(`${result.output || "Program finished with no output."}${completion.earnedXp ? `\n\n+${completion.earnedXp} XP earned` : "\n\nLesson completed"}`);
+        onLessonComplete?.();
       }
       setRunning(false);
     };
@@ -111,8 +114,8 @@ export function Playground({ language }: { language: Language }) {
       window.removeEventListener("message", receiveOutput);
       if (runTimer.current !== null) window.clearTimeout(runTimer.current);
     };
-  }, [langKey, language.name]);
-  const runnerDocument = `<!doctype html><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; style-src 'unsafe-inline'"><script>addEventListener('message',function(e){if(!e.data||e.data.type!=='execute')return;var lines=[];var logger=function(){lines.push(Array.from(arguments).map(function(v){try{return typeof v==='object'?JSON.stringify(v):String(v)}catch{return String(v)}}).join(' '))};try{new Function('console',e.data.code)({log:logger,warn:logger,error:logger,info:logger,table:logger});parent.postMessage({type:'code-output',output:lines.join('\\n')},'*')}catch(error){parent.postMessage({type:'code-output',error:error.name+': '+error.message},'*')}})</script>`;
+  }, [langKey, language.name, lessonId, lessonTitle, onLessonComplete]);
+  const runnerDocument = `<!doctype html><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; connect-src 'none'; img-src 'none'; style-src 'unsafe-inline'"><script>addEventListener('message',function(e){if(!e.data||e.data.type!=='execute')return;var lines=[];var logger=function(){lines.push(Array.from(arguments).map(function(v){try{return typeof v==='object'?JSON.stringify(v):String(v)}catch{return String(v)}}).join(' '))};try{new Function('console',e.data.code)({log:logger,warn:logger,error:logger,info:logger,table:logger});parent.postMessage({type:'code-output',output:lines.join('\\n')},'*')}catch(error){parent.postMessage({type:'code-output',error:error.name+': '+error.message},'*')}})</script>`;
   const loadRunner = () => {
     runnerRef.current?.contentWindow?.postMessage({ type: "execute", code: queuedCode.current }, "*");
     runTimer.current = window.setTimeout(() => {
@@ -128,14 +131,14 @@ export function Playground({ language }: { language: Language }) {
       setOutput("Running in an isolated browser sandbox...");
       setRunnerGeneration((generation) => generation + 1);
     } else if (langKey === "html") { setOutput("HTML preview updated. Open the Preview tab to inspect the result."); }
-    else if (langKey === "python") { setOutput("Python runner is being prepared. Try the browser-based Python editor from a lesson soon."); }
-    else if (langKey === "sql") { setOutput("SQL sandbox is being prepared. Starter query: SELECT 'Hello, Ada!' AS greeting;"); }
-    else if (langKey === "react") { setOutput("React preview is available in guided lessons. Your component is ready to explore."); }
-    else { setOutput("This language path is coming soon. Browse the curriculum while Byte gets it ready."); }
+    else if (langKey === "css") { setOutput("CSS preview updated. Open the Preview tab to inspect the result."); }
+    else { setOutput(`${language.name} editor is ready with a language-specific example. Its execution runtime is not bundled yet.`); }
     if (langKey !== "javascript") window.setTimeout(() => setRunning(false), 160);
   };
-  const extensions = langKey === "python" ? [python()] : langKey === "sql" ? [sql()] : langKey === "html" ? [html()] : [javascript({ jsx: langKey === "react" })];
-  return <div className="playground"><div className="playground-top"><span><i className="playground-live" /> {language.name} Playground</span><div><button className="playground-clear" type="button" onClick={() => { setSource(""); setOutput(""); }}>Clear</button><button className="run-button playground-run" type="button" onClick={runCode} disabled={running}><Play size={14} fill="currentColor" /> {running ? "Running" : "Run code"}</button></div></div><div className="playground-panes"><section className="playground-editor"><div className="playground-file"><Code2 size={14} /> main.{langKey === "python" ? "py" : langKey === "sql" ? "sql" : langKey === "html" ? "html" : "js"}</div><CodeMirror value={source} onChange={setSource} height="min(57vh, 560px)" theme={oneDark} extensions={extensions} basicSetup={{ lineNumbers: true, foldGutter: true }} aria-label={`${language.name} code editor`} /></section><section className="playground-output"><div className="output-tabs"><button className={!showPreview ? "selected" : ""} type="button" onClick={() => setShowPreview(false)}>Console</button><button className={showPreview ? "selected" : ""} type="button" onClick={() => setShowPreview(true)}>Preview</button></div>{showPreview && langKey === "html" ? <iframe className="html-preview" title="HTML code preview" sandbox="" srcDoc={`<!doctype html><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><body>${source}`} /> : <pre>{output || "Your output will appear here when you run your code."}</pre>}<span className="playground-note">{langKey === "javascript" ? "JavaScript runs in an isolated sandbox with network access disabled." : "Code runs in your browser. Don’t paste sensitive data."}</span></section></div><div className="playground-foot"><span>Browser sandbox</span><span>Unsaved draft</span></div><iframe key={runnerGeneration} ref={runnerRef} title="Isolated JavaScript runner" sandbox="allow-scripts" srcDoc={runnerDocument} onLoad={langKey === "javascript" && running ? loadRunner : undefined} hidden /></div>;
+  const extensions = langKey === "python" ? [python()] : langKey === "sql" ? [sql()] : langKey === "html" ? [html()] : langKey === "css" ? [css()] : ["javascript", "typescript", "react", "nextjs"].includes(langKey) ? [javascript({ jsx: langKey === "react" || langKey === "nextjs", typescript: langKey === "typescript" || langKey === "nextjs" })] : [];
+  const previewMarkup = langKey === "css" ? `<!doctype html><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><style>${source}</style><body><h1 class="greeting">Hello, Ada!</h1><p>Edit the CSS to style this preview.</p></body>` : `<!doctype html><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><body>${source}`;
+  const previewAvailable = langKey === "html" || langKey === "css";
+  return <div className="playground"><div className="playground-top"><span><i className="playground-live" /> {language.name} Playground</span><div><button className="playground-clear" type="button" onClick={() => { setSource(getStarterCode(language)); setOutput(""); }}>Reset example</button><button className="run-button playground-run" type="button" onClick={runCode} disabled={running}><Play size={14} fill="currentColor" /> {running ? "Running" : "Run code"}</button></div></div><div className="playground-panes"><section className="playground-editor"><div className="playground-file"><Code2 size={14} /> main.{getFileExtension(language)}</div><CodeMirror value={source} onChange={setSource} height="min(57vh, 560px)" theme={oneDark} extensions={extensions} basicSetup={{ lineNumbers: true, foldGutter: true }} aria-label={`${language.name} code editor`} /></section><section className="playground-output"><div className="output-tabs"><button className={!showPreview ? "selected" : ""} type="button" onClick={() => setShowPreview(false)}>Console</button><button className={showPreview ? "selected" : ""} type="button" onClick={() => setShowPreview(true)} disabled={!previewAvailable}>Preview</button></div>{showPreview && previewAvailable ? <iframe className="html-preview" title={`${language.name} code preview`} sandbox="" srcDoc={previewMarkup} /> : <pre>{output || (langKey === "javascript" ? "Run JavaScript to see your output here." : `Starter example for ${language.name}. Run support is not bundled for this runtime yet.`)}</pre>}<span className="playground-note">{langKey === "javascript" ? "JavaScript runs in an isolated sandbox with network access disabled." : previewAvailable ? "Preview runs in an isolated frame with scripts and network access disabled." : `CodeMirror editor for ${language.name}. Runtime support is coming later.`}</span></section></div><div className="playground-foot"><span>{langKey === "javascript" ? "Isolated JavaScript sandbox" : previewAvailable ? "Sandboxed preview" : "Language-specific starter editor"}</span><span>Unsaved draft</span></div><iframe key={runnerGeneration} ref={runnerRef} title="Isolated JavaScript runner" sandbox="allow-scripts" srcDoc={runnerDocument} onLoad={langKey === "javascript" && running ? loadRunner : undefined} hidden /></div>;
 }
 
 export function OnboardingQuiz() {
@@ -155,6 +158,6 @@ export function CertificateGrid({ languages }: { languages: Language[] }) {
 }
 
 export function DocsSidebar({ languages, active }: { languages: Language[]; active?: string }) {
-  const groups: { label: CatalogCategory; slugs: string[] }[] = [{ label: "Languages", slugs: ["python", "javascript", "html", "sql"] }, { label: "Frameworks", slugs: ["react"] }];
+  const groups: { label: CatalogCategory; slugs: string[] }[] = [{ label: "Languages", slugs: ["python", "javascript", "typescript", "html", "css", "java", "sql", "go", "rust", "swift", "bash", "julia", "solidity", "scala"] }, { label: "Frameworks", slugs: ["react"] }];
   return <aside className="docs-sidebar"><Link href="/docs" className="docs-overview"><Code2 size={15} /> Documentation home</Link>{groups.map((group) => <div className="docs-side-group" key={group.label}><h3>{group.label}</h3>{group.slugs.map((slug) => { const language = languages.find((item) => item.slug === slug)!; return <Link key={slug} href={`/docs/${slug}`} className={active === slug ? "active" : ""}>{language.name}</Link>; })}</div>)}</aside>;
 }

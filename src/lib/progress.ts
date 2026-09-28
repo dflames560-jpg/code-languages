@@ -23,6 +23,36 @@ export type Lesson = {
 
 const storageKey = "code-languages-progress-v1";
 
+const initialProgress: UserProgress = {
+  id: "local-learner",
+  xp: 0,
+  weeklyXp: 0,
+  streakCount: 0,
+  freezeTokens: 2,
+  completedLessons: [],
+  league: "bronze",
+  lastActiveDate: null,
+  weekKey: "",
+};
+const initialProgressSnapshot = JSON.stringify(initialProgress);
+
+export function subscribeProgress(onChange: () => void) {
+  window.addEventListener("code-languages-progress-change", onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener("code-languages-progress-change", onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+export function getProgressSnapshot() {
+  return window.localStorage.getItem(storageKey) ?? initialProgressSnapshot;
+}
+
+export function getServerProgressSnapshot() {
+  return initialProgressSnapshot;
+}
+
 function currentWeekKey(date: Date) {
   const januaryFirst = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
   const days = Math.floor((date.getTime() - januaryFirst.getTime()) / 86_400_000);
@@ -30,17 +60,7 @@ function currentWeekKey(date: Date) {
 }
 
 export function getProgress(): UserProgress {
-  const initial: UserProgress = {
-    id: "local-learner",
-    xp: 0,
-    weeklyXp: 0,
-    streakCount: 0,
-    freezeTokens: 2,
-    completedLessons: [],
-    league: "bronze",
-    lastActiveDate: null,
-    weekKey: currentWeekKey(new Date()),
-  };
+  const initial: UserProgress = { ...initialProgress, weekKey: currentWeekKey(new Date()) };
   if (typeof window === "undefined") return initial;
   try {
     const saved: unknown = JSON.parse(window.localStorage.getItem(storageKey) ?? "null");
@@ -67,6 +87,9 @@ export function completeLesson(lesson: Lesson, date = new Date()): { progress: U
     lastActiveDate: today,
     weekKey: currentWeekKey(date),
   };
-  if (typeof window !== "undefined") window.localStorage.setItem(storageKey, JSON.stringify(updated));
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(storageKey, JSON.stringify(updated));
+    window.dispatchEvent(new Event("code-languages-progress-change"));
+  }
   return { progress: updated, earnedXp: alreadyCompleted ? 0 : lesson.xpReward };
 }
